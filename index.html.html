@@ -1,0 +1,1844 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RETAIL EMPIRE: The Value Chain Engine</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    * {
+      font-family: 'Inter', sans-serif;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background: radial-gradient(circle at top right, #0f172a, #1e293b 50%, #090d16);
+      color: #f8fafc;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-7px); }
+      40% { transform: translateX(7px); }
+      60% { transform: translateX(-5px); }
+      80% { transform: translateX(5px); }
+    }
+    .animate-shake {
+      animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+    }
+
+    @keyframes popSuccess {
+      0% { transform: scale(1); }
+      45% { transform: scale(1.04); }
+      100% { transform: scale(1); }
+    }
+    .animate-pop {
+      animation: popSuccess 0.32s ease-out;
+    }
+
+    @keyframes cardSlideIn {
+      from { opacity: 0; transform: translateY(12px) scale(0.97); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .card-enter {
+      animation: cardSlideIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .drop-zone-active {
+      border-color: #38bdf8 !important;
+      background-color: rgba(56, 189, 248, 0.16) !important;
+      transform: translateY(-2px);
+      box-shadow: 0 0 20px rgba(56, 189, 248, 0.28);
+    }
+
+    .card-selected {
+      box-shadow: 0 0 0 2px #38bdf8, 0 12px 26px -6px rgba(56, 189, 248, 0.4);
+    }
+
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(15, 23, 42, 0.5);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(148, 163, 184, 0.35);
+      border-radius: 9999px;
+    }
+  </style>
+</head>
+<body class="antialiased selection:bg-emerald-500 selection:text-white">
+
+  <!-- ==================== TOP NAVIGATION BAR ==================== -->
+  <header class="sticky top-0 z-30 border-b border-slate-700/75 bg-slate-900/90 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-3">
+      <!-- Brand Identity -->
+      <div class="flex items-center gap-3 cursor-pointer" onclick="goHome()">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 via-teal-500 to-cyan-600 flex items-center justify-center shadow-lg shadow-emerald-500/25 shrink-0">
+          <!-- Storefront Inline SVG -->
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 9l1.5-5h15L21 9M3 9h18M3 9v11a1 1 0 001 1h16a1 1 0 001-1V9M9 21V13h6v8"/>
+          </svg>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-base sm:text-lg font-black tracking-tight bg-gradient-to-r from-white via-emerald-200 to-cyan-200 bg-clip-text text-transparent">
+              RETAIL EMPIRE
+            </h1>
+            <span class="hidden md:inline-block text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-400/30">
+              The Value Chain Engine
+            </span>
+          </div>
+          <p class="text-xs text-slate-400">Omnichannel Retail Operations & Margin Simulation</p>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex items-center gap-2">
+        <button onclick="openDebriefModal()" class="px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-400/30 transition flex items-center gap-1.5 cursor-pointer">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+          </svg>
+          <span>Lecturer's Debrief</span>
+        </button>
+
+        <button id="btnSoundToggle" onclick="toggleSound()" title="Toggle Audio" class="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition cursor-pointer">
+          <svg id="iconSoundOn" class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M11 5L6 9H2v6h4l5 4V5zM15.54 8.46a5 5 0 010 7.07M19.07 4.93a10 10 0 010 14.14"/>
+          </svg>
+          <svg id="iconSoundOff" class="w-5 h-5 text-rose-400 hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M11 5L6 9H2v6h4l5 4V5zM23 9l-6 6M17 9l6 6"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==================== SCREEN 1: LOBBY & STORE CONFIGURATION ==================== -->
+  <main id="screenHome" class="max-w-6xl mx-auto px-4 py-6 sm:py-10">
+    <!-- Hero Section -->
+    <div class="rounded-3xl bg-gradient-to-br from-slate-800/90 via-slate-900/95 to-emerald-950/80 border border-slate-700/80 p-6 sm:p-9 shadow-2xl relative overflow-hidden mb-8">
+      <div class="absolute -right-24 -top-24 w-80 h-80 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none"></div>
+      <div class="absolute -left-24 -bottom-24 w-80 h-80 rounded-full bg-cyan-500/10 blur-3xl pointer-events-none"></div>
+
+      <div class="relative z-10 grid lg:grid-cols-12 gap-8 items-center">
+        <div class="lg:col-span-7 space-y-4">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/15 border border-emerald-400/30 text-emerald-300 text-xs font-semibold">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+            Retail Management & Omnichannel Operations Lab
+          </div>
+          <h2 class="text-2xl sm:text-4xl font-black tracking-tight text-white leading-tight">
+            Architect & Scale Your <span class="text-emerald-400">Retail Value Chain</span>
+          </h2>
+          <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+            Step onto the executive floor. Assemble all <strong>5 Primary Activities</strong> and <strong>4 Support Activities</strong> of Porter's Retail Value Chain, survive a live <strong>Black Swan Market Shock</strong>, and maximize your store's <strong>Net Profit Margin</strong> and <strong>NPS</strong>.
+          </p>
+
+          <!-- Step 1: Team Name -->
+          <div class="pt-1">
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+              1. Management Board / Team Name
+            </label>
+            <input id="teamNameInput" type="text" maxlength="28" placeholder="e.g., Alpha Retail Group..."
+              class="w-full max-w-md px-4 py-3 rounded-xl bg-slate-950/85 border border-slate-600 focus:border-emerald-400 focus:outline-none text-white placeholder-slate-400 text-sm font-medium" />
+          </div>
+
+          <!-- Step 2: Store Niche Selector -->
+          <div class="pt-1">
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
+              2. Select Your Retail Store Niche
+            </label>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5" id="nicheSelector">
+              <button type="button" data-niche="fashion" onclick="selectNiche('fashion')"
+                class="niche-btn active text-left p-3 rounded-2xl bg-emerald-500/20 border-2 border-emerald-400 transition cursor-pointer">
+                <div class="flex items-center justify-between mb-1">
+                  <span class="text-xl">👗</span>
+                  <span class="text-[10px] font-bold uppercase px-1.5 py-0.5 rounded bg-emerald-500/30 text-emerald-200">Selected</span>
+                </div>
+                <div class="text-xs sm:text-sm font-extrabold text-white">Fast Fashion</div>
+                <div class="text-[11px] text-slate-300 mt-0.5">High SKU turnover, fitting rooms & seasonal trends</div>
+              </button>
+
+              <button type="button" data-niche="coffee" onclick="selectNiche('coffee')"
+                class="niche-btn text-left p-3 rounded-2xl bg-slate-900/80 border-2 border-slate-700 hover:border-slate-500 transition cursor-pointer">
+                <div class="flex items-center justify-between mb-1">
+                  <span class="text-xl">☕</span>
+                  <span class="niche-badge text-[10px] font-bold uppercase px-1.5 py-0.5 rounded bg-slate-800 text-slate-400">Select</span>
+                </div>
+                <div class="text-xs sm:text-sm font-extrabold text-white">Specialty Coffee</div>
+                <div class="text-[11px] text-slate-400 mt-0.5">Cold-chain perishables, barista speed & loyalty app</div>
+              </button>
+
+              <button type="button" data-niche="electronics" onclick="selectNiche('electronics')"
+                class="niche-btn text-left p-3 rounded-2xl bg-slate-900/80 border-2 border-slate-700 hover:border-slate-500 transition cursor-pointer">
+                <div class="flex items-center justify-between mb-1">
+                  <span class="text-xl">🎧</span>
+                  <span class="niche-badge text-[10px] font-bold uppercase px-1.5 py-0.5 rounded bg-slate-800 text-slate-400">Select</span>
+                </div>
+                <div class="text-xs sm:text-sm font-extrabold text-white">Consumer Tech</div>
+                <div class="text-[11px] text-slate-400 mt-0.5">High ticket items, warranty service & demo zones</div>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Visual Diagram Preview of Porter's Retail Value Chain -->
+        <div class="lg:col-span-5 bg-slate-950/75 rounded-2xl p-4 border border-slate-700/80 shadow-inner">
+          <div class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 flex items-center justify-between">
+            <span>Porter's Retail Value Chain</span>
+            <span class="text-emerald-400">9 Operational Links</span>
+          </div>
+
+          <div class="space-y-2.5">
+            <!-- Primary Activities Preview -->
+            <div class="p-2.5 rounded-xl bg-emerald-950/40 border border-emerald-500/30">
+              <div class="text-[11px] font-bold text-emerald-300 mb-1.5">Primary Activities (Storefront Flow &rarr; Margin)</div>
+              <div class="grid grid-cols-5 gap-1 text-[9px] font-bold text-center text-white">
+                <div class="bg-emerald-600/30 p-1.5 rounded border border-emerald-400/30">1. Inbound Logistics</div>
+                <div class="bg-emerald-600/30 p-1.5 rounded border border-emerald-400/30">2. Store Operations</div>
+                <div class="bg-emerald-600/30 p-1.5 rounded border border-emerald-400/30">3. Outbound Delivery</div>
+                <div class="bg-emerald-600/30 p-1.5 rounded border border-emerald-400/30">4. Marketing & Sales</div>
+                <div class="bg-emerald-600/30 p-1.5 rounded border border-emerald-400/30">5. After-Sales Service</div>
+              </div>
+            </div>
+
+            <!-- Support Activities Preview -->
+            <div class="p-2.5 rounded-xl bg-indigo-950/40 border border-indigo-500/30">
+              <div class="text-[11px] font-bold text-indigo-300 mb-1.5">Support Activities (Operational Backbone)</div>
+              <div class="grid grid-cols-2 gap-1.5 text-[10px] font-semibold text-indigo-100">
+                <div class="bg-indigo-600/25 px-2 py-1 rounded border border-indigo-400/25">6. Firm Infrastructure</div>
+                <div class="bg-indigo-600/25 px-2 py-1 rounded border border-indigo-400/25">7. Human Resource Mgmt</div>
+                <div class="bg-indigo-600/25 px-2 py-1 rounded border border-indigo-400/25">8. Technology Development</div>
+                <div class="bg-indigo-600/25 px-2 py-1 rounded border border-indigo-400/25">9. Procurement</div>
+              </div>
+            </div>
+
+            <!-- Outcome Banner -->
+            <div class="rounded-xl bg-gradient-to-r from-amber-500/20 to-emerald-500/20 border border-amber-400/30 p-2.5 text-center">
+              <span class="text-xs font-extrabold text-amber-200">🎯 Goal: Maximize Net Profit Margin & Customer NPS</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 3: Game Mode Selection -->
+    <div class="grid md:grid-cols-2 gap-6 mb-8">
+      <!-- Classic Simulation Mode -->
+      <div class="rounded-3xl bg-slate-800/80 border border-slate-700 hover:border-emerald-400/70 p-6 flex flex-col justify-between transition group shadow-xl">
+        <div>
+          <div class="flex items-center justify-between mb-4">
+            <span class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-400/30">
+              MODE 1 • FULL SIMULATION + CRISIS TEST
+            </span>
+            <span class="text-xl">❤️❤️❤️ + ⚡</span>
+          </div>
+          <h3 class="text-xl font-extrabold text-white mb-2 group-hover:text-emerald-300 transition">
+            Classic Operations Mode
+          </h3>
+          <p class="text-slate-300 text-sm leading-relaxed mb-4">
+            Classify <strong>18 core retail action cards</strong> across all 9 value chain links with <strong>3 operational lives</strong> and instant academic feedback. Survive to unlock the <strong>Live Black Swan Crisis Round</strong>!
+          </p>
+        </div>
+        <button onclick="startGame('classic')" class="w-full py-3.5 px-5 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold text-sm sm:text-base shadow-lg shadow-emerald-500/25 transition transform active:scale-[0.99] cursor-pointer">
+          Launch Classic Simulation &rarr;
+        </button>
+      </div>
+
+      <!-- Time Attack Mode -->
+      <div class="rounded-3xl bg-slate-800/80 border border-slate-700 hover:border-amber-400/70 p-6 flex flex-col justify-between transition group shadow-xl">
+        <div>
+          <div class="flex items-center justify-between mb-4">
+            <span class="px-3 py-1 rounded-full text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-400/30">
+              MODE 2 • 60-SECOND EXECUTIVE SPRINT
+            </span>
+            <span class="text-xl">⏱️🔥🏆</span>
+          </div>
+          <h3 class="text-xl font-extrabold text-white mb-2 group-hover:text-amber-300 transition">
+            Time Attack Sprint (60s)
+          </h3>
+          <p class="text-slate-300 text-sm leading-relaxed mb-4">
+            Race against the clock for <strong>60 seconds</strong> using an expanded deck of <strong>27 retail scenarios</strong>. Chain consecutive placements to trigger <strong>Combo Multipliers (up to x5)</strong> and claim the CEO title!
+          </p>
+        </div>
+        <button onclick="startGame('timeattack')" class="w-full py-3.5 px-5 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-white font-bold text-sm sm:text-base shadow-lg shadow-amber-500/25 transition transform active:scale-[0.99] cursor-pointer">
+          Launch 60s Time Attack &rarr;
+        </button>
+      </div>
+    </div>
+
+    <!-- Classroom Executive Leaderboard -->
+    <div class="rounded-3xl bg-slate-900/85 border border-slate-800 p-6">
+      <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+        <div class="flex items-center gap-2.5">
+          <span class="text-xl">🏆</span>
+          <h3 class="text-base sm:text-lg font-extrabold text-white">Classroom Executive Leaderboard</h3>
+        </div>
+        <button onclick="clearLeaderboard()" class="text-xs text-slate-400 hover:text-rose-400 underline transition cursor-pointer">
+          Reset Leaderboard
+        </button>
+      </div>
+      <div id="leaderboardContainer" class="overflow-x-auto"></div>
+    </div>
+  </main>
+
+  <!-- ==================== SCREEN 2: ACTIVE VALUE CHAIN GAME BOARD ==================== -->
+  <section id="screenGame" class="hidden max-w-7xl mx-auto px-3 sm:px-6 py-4 sm:py-5">
+    <!-- Top Live KPI HUD -->
+    <div class="rounded-2xl bg-slate-900/95 border border-slate-700/85 p-3 sm:p-4 mb-4 flex flex-wrap items-center justify-between gap-3 shadow-lg">
+      <!-- Team & Store Info -->
+      <div class="flex items-center gap-3">
+        <button onclick="goHome()" class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold border border-slate-700 transition cursor-pointer">
+          &larr; Exit
+        </button>
+        <div>
+          <div class="flex items-center gap-2 flex-wrap">
+            <span id="hudTeamName" class="font-bold text-white text-sm">Alpha Retail</span>
+            <span id="hudNicheBadge" class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300">👗 Fast Fashion</span>
+            <span id="hudModeBadge" class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300">CLASSIC</span>
+          </div>
+          <div class="flex items-center gap-3 mt-1">
+            <span id="hudProgressText" class="text-xs text-slate-400">Card 1 / 18</span>
+            <div class="w-24 sm:w-32 h-1.5 bg-slate-800 rounded-full overflow-hidden">
+              <div id="hudProgressBar" class="h-full bg-emerald-400 transition-all duration-300" style="width: 0%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Retail KPI Counters -->
+      <div class="flex items-center gap-2.5 sm:gap-4 flex-wrap">
+        <!-- Net Margin / Budget -->
+        <div class="text-center px-2.5 py-1 rounded-xl bg-slate-800/90 border border-slate-700">
+          <div class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Est. Margin</div>
+          <div id="hudMargin" class="text-sm sm:text-base font-black text-emerald-400">$100,000</div>
+        </div>
+
+        <!-- NPS Score -->
+        <div class="text-center px-2.5 py-1 rounded-xl bg-slate-800/90 border border-slate-700">
+          <div class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">NPS</div>
+          <div id="hudNps" class="text-sm sm:text-base font-black text-cyan-400">+50</div>
+        </div>
+
+        <!-- Combo -->
+        <div class="text-center px-2 py-1">
+          <div class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Combo</div>
+          <div id="hudCombo" class="text-sm sm:text-base font-black text-amber-400">x1</div>
+        </div>
+
+        <!-- Score -->
+        <div class="text-center px-3 py-1 rounded-xl bg-slate-800/90 border border-slate-700">
+          <div class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Score</div>
+          <div id="hudScore" class="text-base sm:text-lg font-black text-white">0</div>
+        </div>
+
+        <!-- Lives (Classic) -->
+        <div id="hudLivesBox" class="text-center">
+          <div class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Lives</div>
+          <div id="hudLives" class="text-sm sm:text-base tracking-widest">❤️❤️❤️</div>
+        </div>
+
+        <!-- Timer (Time Attack) -->
+        <div id="hudTimerBox" class="hidden text-center px-3 py-1 rounded-xl bg-rose-950/70 border border-rose-500/40">
+          <div class="text-[10px] uppercase tracking-wider text-rose-300 font-semibold">Time</div>
+          <div id="hudTimer" class="text-base sm:text-lg font-black text-rose-400">60s</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Active Action Card + Instant Academic Feedback Panel -->
+    <div class="grid lg:grid-cols-12 gap-4 mb-4 items-stretch">
+      <!-- Draggable / Tappable Card -->
+      <div class="lg:col-span-7 flex flex-col justify-center">
+        <div class="text-xs text-slate-400 mb-1.5 flex items-center justify-between px-1">
+          <span>💡 <strong>Action:</strong> Drag card to a link below <em>or</em> tap any link slot directly</span>
+          <span class="hidden sm:inline text-emerald-400 font-medium">Touch & Mouse Ready</span>
+        </div>
+
+        <div id="activeCard" draggable="true" onclick="toggleSelectCard()"
+          class="w-full rounded-2xl bg-gradient-to-br from-slate-800 via-slate-800 to-slate-900 border-2 border-sky-400/80 p-4 sm:p-5 shadow-xl cursor-grab active:cursor-grabbing transition-all select-none card-selected">
+          <div class="flex items-start justify-between gap-3">
+            <div>
+              <span id="cardTag" class="inline-block text-[11px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-md bg-sky-500/20 text-sky-300 border border-sky-400/30 mb-2">
+                OPERATIONAL ACTION
+              </span>
+              <h3 id="cardTitle" class="text-base sm:text-xl font-extrabold text-white leading-snug">
+                Loading action card...
+              </h3>
+              <p id="cardHint" class="text-xs sm:text-sm text-slate-300 mt-1">
+                Context hint
+              </p>
+            </div>
+            <div id="cardIcon" class="w-12 h-12 rounded-2xl bg-slate-700/75 border border-slate-600 flex items-center justify-center text-2xl shrink-0">
+              📦
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Real-time Coaching & Rationale Box -->
+      <div class="lg:col-span-5 flex flex-col">
+        <div class="text-xs text-slate-400 mb-1.5 px-1">📋 <strong>Operations Coach & Value Chain Feedback</strong></div>
+        <div id="feedbackBox" class="flex-1 rounded-2xl bg-slate-900/90 border border-slate-700/80 p-4 flex flex-col justify-center transition-all">
+          <div class="flex items-start gap-3">
+            <div id="feedbackIcon" class="w-9 h-9 rounded-xl bg-sky-500/20 text-sky-300 flex items-center justify-center text-lg shrink-0 font-bold">
+              ℹ️
+            </div>
+            <div>
+              <h4 id="feedbackTitle" class="font-bold text-sm text-sky-300">Ready to build your store's value chain!</h4>
+              <p id="feedbackDesc" class="text-xs sm:text-sm text-slate-300 mt-1 leading-relaxed">
+                Decide whether the card belongs to the <strong>5 Primary Activities</strong> (top row) or the <strong>4 Support Activities</strong> (bottom row), then drop or tap the matching slot.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== PORTER'S RETAIL VALUE CHAIN INTERACTIVE BOARD ==================== -->
+    <div class="rounded-3xl bg-slate-950/80 border border-slate-800 p-3 sm:p-5 shadow-2xl space-y-4">
+      
+      <!-- TIER 1: PRIMARY ACTIVITIES (Sequential Horizontal Flow + Margin Arrow) -->
+      <div class="rounded-2xl bg-emerald-950/20 border border-emerald-500/30 p-3 sm:p-4">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+          <div class="flex items-center gap-2">
+            <span class="w-3 h-3 rounded-full bg-emerald-400"></span>
+            <h4 class="text-xs sm:text-sm font-black uppercase tracking-wider text-emerald-300">
+              Primary Activities (Sequential Storefront Flow)
+            </h4>
+          </div>
+          <span class="text-[11px] text-emerald-400/85 font-medium">
+            Receiving &rarr; Store Floor &rarr; Delivery &rarr; Sales &rarr; After-Sales &rarr; Profit Margin
+          </span>
+        </div>
+
+        <div class="flex flex-col xl:flex-row items-stretch gap-2.5">
+          <!-- 5 Primary Columns -->
+          <div class="flex-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2.5">
+            
+            <!-- 1. Inbound Logistics -->
+            <div data-zone="inbound"
+              onclick="handleZoneClick('inbound')"
+              ondragover="handleDragOver(event)"
+              ondragleave="handleDragLeave(event)"
+              ondrop="handleDrop(event, 'inbound')"
+              class="drop-zone rounded-2xl bg-slate-900/95 hover:bg-slate-800 border-2 border-slate-700 hover:border-emerald-400 p-3 cursor-pointer transition-all flex flex-col justify-between min-h-[145px]">
+              <div>
+                <div class="flex items-center justify-between gap-1 mb-1">
+                  <span class="text-[10px] font-extrabold px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300">1. INBOUND</span>
+                  <span id="count_inbound" class="text-[11px] font-bold text-slate-400">0</span>
+                </div>
+                <h5 class="text-xs sm:text-sm font-bold text-white leading-snug">Inbound Logistics</h5>
+                <p class="text-[11px] text-slate-400 mt-1 leading-snug">
+                  Receiving goods, QA inspection, barcode tagging & backroom storage.
+                </p>
+              </div>
+              <div id="badges_inbound" class="mt-2 flex flex-wrap gap-1"></div>
+            </div>
+
+            <!-- 2. Operations -->
+            <div data-zone="operations"
+              onclick="handleZoneClick('operations')"
+              ondragover="handleDragOver(event)"
+              ondragleave="handleDragLeave(event)"
+              ondrop="handleDrop(event, 'operations')"
+              class="drop-zone rounded-2xl bg-slate-900/95 hover:bg-slate-800 border-2 border-slate-700 hover:border-emerald-400 p-3 cursor-pointer transition-all flex flex-col justify-between min-h-[145px]">
+              <div>
+                <div class="flex items-center justify-between gap-1 mb-1">
+                  <span class="text-[10px] font-extrabold px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300">2. OPERATIONS</span>
+                  <span id="count_operations" class="text-[11px] font-bold text-slate-400">0</span>
+                </div>
+                <h5 class="text-xs sm:text-sm font-bold text-white leading-snug">Store Operations</h5>
+                <p class="text-[11px] text-slate-400 mt-1 leading-snug">
+                  Planograms, shelf merchandising, fitting rooms & POS checkout flow.
+                </p>
+              </div>
+              <div id="badges_operations" class="mt-2 flex flex-wrap gap-1"></div>
+            </div>
+
+            <!-- 3. Outbound Logistics -->
+            <div data-zone="outbound"
+              onclick="handleZoneClick('outbound')"
+              ondragover="handleDragOver(event)"
+              ondragleave="handleDragLeave(event)"
+              ondrop="handleDrop(event, 'outbound')"
+              class="drop-zone rounded-2xl bg-slate-900/95 hover:bg-slate-800 border-2 border-slate-700 hover:border-emerald-400 p-3 cursor-pointer transition-all flex flex-col justify-between min-h-[145px]">
+              <div>
+                <div class="flex items-center justify-between gap-1 mb-1">
+                  <span class="text-[10px] font-extrabold px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300">3. OUTBOUND</span>
+                  <span id="count_outbound" class="text-[11px] font-bold text-slate-400">0</span>
+                </div>
+                <h5 class="text-xs sm:text-sm font-bold text-white leading-snug">Outbound Logistics</h5>
+                <p class="text-[11px] text-slate-400 mt-1 leading-snug">
+                  Checkout bagging, Click & Collect (BOPIS) lockers & same-day courier dispatch.
+                </p>
+              </div>
+              <div id="badges_outbound" class="mt-2 flex flex-wrap gap-1"></div>
+            </div>
+
+            <!-- 4. Marketing & Sales -->
+            <div data-zone="marketing"
+              onclick="handleZoneClick('marketing')"
+              ondragover="handleDragOver(event)"
+              ondragleave="handleDragLeave(event)"
+              ondrop="handleDrop(event, 'marketing')"
+              class="drop-zone rounded-2xl bg-slate-900/95 hover:bg-slate-800 border-2 border-slate-700 hover:border-emerald-400 p-3 cursor-pointer transition-all flex flex-col justify-between min-h-[145px]">
+              <div>
+                <div class="flex items-center justify-between gap-1 mb-1">
+                  <span class="text-[10px] font-extrabold px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300">4. MARKETING</span>
+                  <span id="count_marketing" class="text-[11px] font-bold text-slate-400">0</span>
+                </div>
+                <h5 class="text-xs sm:text-sm font-bold text-white leading-snug">Marketing & Sales</h5>
+                <p class="text-[11px] text-slate-400 mt-1 leading-snug">
+                  Window displays, seasonal promos, loyalty rewards & local digital ads.
+                </p>
+              </div>
+              <div id="badges_marketing" class="mt-2 flex flex-wrap gap-1"></div>
+            </div>
+
+            <!-- 5. Service -->
+            <div data-zone="service"
+              onclick="handleZoneClick('service')"
+              ondragover="handleDragOver(event)"
+              ondragleave="handleDragLeave(event)"
+              ondrop="handleDrop(event, 'service')"
+              class="drop-zone rounded-2xl bg-slate-900/95 hover:bg-slate-800 border-2 border-slate-700 hover:border-emerald-400 p-3 cursor-pointer transition-all flex flex-col justify-between min-h-[145px]">
+              <div>
+                <div class="flex items-center justify-between gap-1 mb-1">
+                  <span class="text-[10px] font-extrabold px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300">5. SERVICE</span>
+                  <span id="count_service" class="text-[11px] font-bold text-slate-400">0</span>
+                </div>
+                <h5 class="text-xs sm:text-sm font-bold text-white leading-snug">After-Sales Service</h5>
+                <p class="text-[11px] text-slate-400 mt-1 leading-snug">
+                  Returns & exchanges desk, warranty repairs & post-purchase customer care.
+                </p>
+              </div>
+              <div id="badges_service" class="mt-2 flex flex-wrap gap-1"></div>
+            </div>
+          </div>
+
+          <!-- Margin & Customer Value Output Chevron -->
+          <div class="xl:w-28 rounded-2xl bg-gradient-to-b from-amber-500/25 via-emerald-500/25 to-teal-600/25 border-2 border-amber-400/50 p-3 flex xl:flex-col items-center justify-center text-center gap-2 shrink-0">
+            <span class="text-2xl">💰</span>
+            <div>
+              <div class="text-[10px] font-black uppercase tracking-wider text-amber-300">Output</div>
+              <div class="text-xs font-extrabold text-white leading-tight">Profit Margin & Loyalty</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TIER 2: SUPPORT ACTIVITIES (Horizontal Backbone Supporting the Store) -->
+      <div class="rounded-2xl bg-indigo-950/20 border border-indigo-500/30 p-3 sm:p-4">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+          <div class="flex items-center gap-2">
+            <span class="w-3 h-3 rounded-full bg-indigo-400"></span>
+            <h4 class="text-xs sm:text-sm font-black uppercase tracking-wider text-indigo-300">
+              Support Activities (Store-Wide Operational Backbone)
+            </h4>
+          </div>
+          <span class="text-[11px] text-indigo-400/85 font-medium">
+            Enabling every primary activity across the retail enterprise
+          </span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          <!-- 6. Firm Infrastructure -->
+          <div data-zone="infrastructure"
+            onclick="handleZoneClick('infrastructure')"
+            ondragover="handleDragOver(event)"
+            ondragleave="handleDragLeave(event)"
+            ondrop="handleDrop(event, 'infrastructure')"
+            class="drop-zone rounded-2xl bg-slate-900/95 hover:bg-slate-800 border-2 border-slate-700 hover:border-indigo-400 p-3 cursor-pointer transition-all flex flex-col justify-between min-h-[130px]">
+            <div>
+              <div class="flex items-center justify-between gap-1 mb-1">
+                <span class="text-[10px] font-extrabold px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300">6. INFRASTRUCTURE</span>
+                <span id="count_infrastructure" class="text-[11px] font-bold text-slate-400">0</span>
+              </div>
+              <h5 class="text-xs sm:text-sm font-bold text-white leading-snug">Firm Infrastructure</h5>
+              <p class="text-[11px] text-slate-400 mt-1 leading-snug">
+                Store lease location, store accounting, legal compliance & loss prevention security.
+              </p>
+            </div>
+            <div id="badges_infrastructure" class="mt-2 flex flex-wrap gap-1"></div>
+          </div>
+
+          <!-- 7. Human Resource Management -->
+          <div data-zone="hr"
+            onclick="handleZoneClick('hr')"
+            ondragover="handleDragOver(event)"
+            ondragleave="handleDragLeave(event)"
+            ondrop="handleDrop(event, 'hr')"
+            class="drop-zone rounded-2xl bg-slate-900/95 hover:bg-slate-800 border-2 border-slate-700 hover:border-indigo-400 p-3 cursor-pointer transition-all flex flex-col justify-between min-h-[130px]">
+            <div>
+              <div class="flex items-center justify-between gap-1 mb-1">
+                <span class="text-[10px] font-extrabold px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300">7. HUMAN RESOURCES</span>
+                <span id="count_hr" class="text-[11px] font-bold text-slate-400">0</span>
+              </div>
+              <h5 class="text-xs sm:text-sm font-bold text-white leading-snug">Human Resource Mgmt</h5>
+              <p class="text-[11px] text-slate-400 mt-1 leading-snug">
+                Recruiting associates, peak-hour shift scheduling & customer service training.
+              </p>
+            </div>
+            <div id="badges_hr" class="mt-2 flex flex-wrap gap-1"></div>
+          </div>
+
+          <!-- 8. Technology Development -->
+          <div data-zone="tech"
+            onclick="handleZoneClick('tech')"
+            ondragover="handleDragOver(event)"
+            ondragleave="handleDragLeave(event)"
+            ondrop="handleDrop(event, 'tech')"
+            class="drop-zone rounded-2xl bg-slate-900/95 hover:bg-slate-800 border-2 border-slate-700 hover:border-indigo-400 p-3 cursor-pointer transition-all flex flex-col justify-between min-h-[130px]">
+            <div>
+              <div class="flex items-center justify-between gap-1 mb-1">
+                <span class="text-[10px] font-extrabold px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300">8. TECHNOLOGY</span>
+                <span id="count_tech" class="text-[11px] font-bold text-slate-400">0</span>
+              </div>
+              <h5 class="text-xs sm:text-sm font-bold text-white leading-snug">Technology Development</h5>
+              <p class="text-[11px] text-slate-400 mt-1 leading-snug">
+                RFID inventory tags, self-checkout kiosks, CRM loyalty app & AI demand forecasting.
+              </p>
+            </div>
+            <div id="badges_tech" class="mt-2 flex flex-wrap gap-1"></div>
+          </div>
+
+          <!-- 9. Procurement -->
+          <div data-zone="procurement"
+            onclick="handleZoneClick('procurement')"
+            ondragover="handleDragOver(event)"
+            ondragleave="handleDragLeave(event)"
+            ondrop="handleDrop(event, 'procurement')"
+            class="drop-zone rounded-2xl bg-slate-900/95 hover:bg-slate-800 border-2 border-slate-700 hover:border-indigo-400 p-3 cursor-pointer transition-all flex flex-col justify-between min-h-[130px]">
+            <div>
+              <div class="flex items-center justify-between gap-1 mb-1">
+                <span class="text-[10px] font-extrabold px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300">9. PROCUREMENT</span>
+                <span id="count_procurement" class="text-[11px] font-bold text-slate-400">0</span>
+              </div>
+              <h5 class="text-xs sm:text-sm font-bold text-white leading-snug">Procurement</h5>
+              <p class="text-[11px] text-slate-400 mt-1 leading-snug">
+                Negotiating supplier Net-60 payment terms, bulk discounts & store fixture purchasing.
+              </p>
+            </div>
+            <div id="badges_procurement" class="mt-2 flex flex-wrap gap-1"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ==================== SCREEN 2B: BLACK SWAN MARKET SHOCK (ROUND 3 CHALLENGE) ==================== -->
+  <section id="screenCrisis" class="hidden max-w-4xl mx-auto px-4 py-8">
+    <div class="rounded-3xl bg-gradient-to-br from-rose-950/90 via-slate-900 to-slate-950 border-2 border-rose-500/60 p-6 sm:p-9 shadow-2xl">
+      <div class="flex items-center justify-between gap-3 mb-4">
+        <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-500/20 border border-rose-400/40 text-rose-300 text-xs font-extrabold uppercase tracking-wider">
+          <span class="w-2 h-2 rounded-full bg-rose-400 animate-ping"></span>
+          Round 3: Black Swan Stress Test
+        </span>
+        <span class="text-xs font-bold text-slate-300">Executive Decision</span>
+      </div>
+
+      <h2 id="crisisHeadline" class="text-2xl sm:text-3xl font-black text-white mb-3">
+        🚨 Viral TikTok Trend Doubles Foot Traffic While Supplier Shipment Is Delayed 48 Hours!
+      </h2>
+      <p id="crisisScenarioDesc" class="text-slate-300 text-sm sm:text-base leading-relaxed mb-6">
+        Your store's signature hero product just went viral overnight! Customers are lining up outside, but port congestion delayed your main Inbound Logistics replenishment truck by 48 hours. As the Store Management Board, which cross-chain operational strategy do you execute?
+      </p>
+
+      <div id="crisisOptionsContainer" class="space-y-3">
+        <!-- Populated dynamically by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== SCREEN 3: EXECUTIVE AUDIT & FINAL RESULTS ==================== -->
+  <section id="screenResult" class="hidden max-w-4xl mx-auto px-4 py-8">
+    <div class="rounded-3xl bg-slate-900/95 border border-slate-700 p-6 sm:p-10 shadow-2xl text-center">
+      <div id="resultTrophy" class="text-6xl mb-3">🏆</div>
+      <div id="resultRankBadge" class="inline-block px-4 py-1 rounded-full bg-amber-500/20 border border-amber-400/40 text-amber-300 text-xs font-extrabold uppercase tracking-wider mb-2">
+        EXECUTIVE TITLE: RETAIL EMPIRE CEO
+      </div>
+      <h2 id="resultHeadline" class="text-2xl sm:text-4xl font-black text-white mb-2">
+        Store Value Chain Audit Complete!
+      </h2>
+      <p id="resultSubtext" class="text-slate-300 text-sm sm:text-base max-w-xl mx-auto mb-6">
+        Your management board successfully aligned supply, store operations, and omnichannel customer service.
+      </p>
+
+      <!-- KPI Summary Grid -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 max-w-2xl mx-auto mb-8">
+        <div class="rounded-2xl bg-slate-800/90 border border-slate-700 p-4">
+          <div class="text-xs text-slate-400 font-medium">Final Score</div>
+          <div id="resScore" class="text-2xl font-black text-white mt-1">0</div>
+        </div>
+        <div class="rounded-2xl bg-slate-800/90 border border-slate-700 p-4">
+          <div class="text-xs text-slate-400 font-medium">Net Margin</div>
+          <div id="resMargin" class="text-xl sm:text-2xl font-black text-emerald-400 mt-1">$100k</div>
+        </div>
+        <div class="rounded-2xl bg-slate-800/90 border border-slate-700 p-4">
+          <div class="text-xs text-slate-400 font-medium">Customer NPS</div>
+          <div id="resNps" class="text-2xl font-black text-cyan-400 mt-1">+50</div>
+        </div>
+        <div class="rounded-2xl bg-slate-800/90 border border-slate-700 p-4">
+          <div class="text-xs text-slate-400 font-medium">Accuracy / Combo</div>
+          <div id="resAccuracy" class="text-xl sm:text-2xl font-black text-amber-400 mt-1">100%</div>
+        </div>
+      </div>
+
+      <!-- Post-Game Buttons -->
+      <div class="flex flex-wrap items-center justify-center gap-3">
+        <button onclick="openDebriefModal()" class="px-6 py-3.5 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-white font-bold text-sm sm:text-base shadow-lg shadow-amber-500/25 transition flex items-center gap-2 cursor-pointer">
+          <span>🎓</span> Open Lecturer's Debriefing Guide
+        </button>
+        <button onclick="restartSameMode()" class="px-6 py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm sm:text-base transition cursor-pointer">
+          🔄 Play Again
+        </button>
+        <button onclick="goHome()" class="px-6 py-3.5 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-sm sm:text-base border border-slate-700 transition cursor-pointer">
+          🏠 Return to Lobby
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== MODAL: LECTURER'S DEBRIEFING GUIDE ==================== -->
+  <div id="debriefModal" class="hidden fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
+    <div class="bg-slate-900 border border-slate-700 rounded-3xl max-w-4xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden my-auto">
+      <div class="p-4 sm:p-6 border-b border-slate-800 flex items-center justify-between gap-4">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-wider text-amber-400">Classroom Wrap-Up & Discussion</span>
+          <h3 class="text-lg sm:text-2xl font-extrabold text-white">Lecturer's Retail Value Chain Takeaways</h3>
+        </div>
+        <button onclick="closeDebriefModal()" class="w-10 h-10 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center font-bold text-lg cursor-pointer">
+          ✕
+        </button>
+      </div>
+
+      <div class="p-4 sm:p-6 overflow-y-auto space-y-5 text-sm">
+        <div class="grid sm:grid-cols-3 gap-4">
+          <div class="rounded-2xl bg-emerald-950/40 border border-emerald-500/30 p-4">
+            <div class="text-xl mb-2">🔗</div>
+            <h4 class="font-extrabold text-emerald-300 mb-1">1. Interdependency of Links</h4>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Flashy <strong>Marketing & Sales</strong> campaigns fail if <strong>Inbound Logistics</strong> leaves shelves empty—wasting ad spend and destroying customer trust (NPS).
+            </p>
+          </div>
+
+          <div class="rounded-2xl bg-amber-950/40 border border-amber-500/30 p-4">
+            <div class="text-xl mb-2">📊</div>
+            <h4 class="font-extrabold text-amber-300 mb-1">2. Where Margin Is Won</h4>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Retail operates on razor-thin net margins. Competitive advantage stems from tight alignment between <strong>Procurement</strong>, <strong>RFID Inventory Tech</strong>, and lean <strong>Store Operations</strong>.
+            </p>
+          </div>
+
+          <div class="rounded-2xl bg-cyan-950/40 border border-cyan-500/30 p-4">
+            <div class="text-xl mb-2"> omnichannel 🏪📱</div>
+            <h4 class="font-extrabold text-cyan-300 mb-1">3. Omnichannel Fulfillment</h4>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Modern retail stores act as hybrid micro-fulfillment hubs where <strong>Outbound Logistics</strong> (BOPIS, same-day delivery) and frictionless <strong>Service</strong> drive repeat visits.
+            </p>
+          </div>
+        </div>
+
+        <!-- Discussion Prompts for Students -->
+        <div class="rounded-2xl bg-slate-800/70 border border-slate-700 p-4 space-y-2.5">
+          <h4 class="font-extrabold text-white text-sm">💬 Classroom Discussion Questions:</h4>
+          <ul class="list-disc list-inside text-xs sm:text-sm text-slate-300 space-y-1.5">
+            <li>Which link in your store's value chain acted as the biggest bottleneck during the <strong>Black Swan Market Shock</strong>?</li>
+            <li>How does investing in <strong>Technology Development</strong> (Support Activity #8) directly reduce costs in <strong>Inbound Logistics</strong> and <strong>Operations</strong>?</li>
+            <li>Compare <em>Fast Fashion</em> vs. <em>Specialty Coffee</em>: Which primary activity requires the tightest quality control to prevent margin erosion?</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="p-4 border-t border-slate-800 flex justify-end">
+        <button onclick="closeDebriefModal()" class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm transition cursor-pointer">
+          Close Debriefing Guide
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== JAVASCRIPT ENGINE & DATA ==================== -->
+  <script>
+    /**
+     * 1. RETAIL NICHE CONFIGURATIONS & BLACK SWAN CRISIS SCENARIOS
+     */
+    const NICHES = {
+      fashion: {
+        label: '👗 Fast Fashion',
+        crisisTitle: '🚨 Viral TikTok Outfit Trend Doubles Foot Traffic While Cargo Shipment Is Delayed 48 Hours!',
+        crisisDesc: 'A fashion influencer just featured your store’s trench coat on TikTok! Store traffic has doubled overnight, but port congestion delayed your Inbound Logistics replenishment truck by 48 hours. How does your management board respond?',
+        crisisOptions: [
+          {
+            title: 'Activate Omnichannel Ship-from-Store + Pre-Order Loyalty Vouchers',
+            desc: 'Use RFID tech to pull reserve stock from nearby sister branches, offer free home delivery (Outbound) with a 15% loyalty voucher for backordered sizes, and reallocate backroom HR staff to fitting rooms.',
+            marginDelta: 18000,
+            npsDelta: 15,
+            scoreBonus: 500,
+            correct: true,
+            feedback: 'Brilliant cross-chain orchestration! You leveraged Technology, Outbound Logistics, and HR flexibility to capture demand without frustrating shoppers.'
+          },
+          {
+            title: 'Launch Heavy Paid Social Ads to Capitalize on the Hype Immediately',
+            desc: 'Double Marketing & Sales ad spend today to drive even more shoppers into the physical store despite empty racks.',
+            marginDelta: -15000,
+            npsDelta: -25,
+            scoreBonus: 0,
+            correct: false,
+            feedback: 'Classic Value Chain mismatch! Pouring money into Marketing when Inbound Logistics is out of stock maximizes customer disappointment and crushes NPS.'
+          },
+          {
+            title: 'Raise Retail Prices by 30% on Remaining Store Floor Stock',
+            desc: 'Immediately hike price tags on the few remaining sizes to maximize unit margin.',
+            marginDelta: 4000,
+            npsDelta: -30,
+            scoreBonus: 100,
+            correct: false,
+            feedback: 'Short-term price gouging destroys brand trust and triggers backlash in After-Sales Service and social media.'
+          }
+        ]
+      },
+      coffee: {
+        label: '☕ Specialty Coffee',
+        crisisTitle: '🚨 Morning Commuter Surge Hits While Espresso Machine #2 Fails & Milk Delivery Is Late!',
+        crisisDesc: 'A local conference next door just sent 300 caffeine-hungry attendees to your cafe at 8:00 AM, right as one espresso boiler goes offline and cold-chain milk delivery is stuck in traffic. What is your executive play?',
+        crisisOptions: [
+          {
+            title: 'Deploy Mobile App Pre-Order Queue + Cold Brew Batching + Local Emergency Sourcing',
+            desc: 'Push mobile app ordering with ready-time alerts (Tech), spotlight pre-batched Cold Brew & pastries at POS (Operations), and authorize emergency local dairy procurement.',
+            marginDelta: 15000,
+            npsDelta: 14,
+            scoreBonus: 500,
+            correct: true,
+            feedback: 'Spot-on operational agility! Aligning Procurement, Technology, and Store Operations kept lines moving and protected peak-hour revenue.'
+          },
+          {
+            title: 'Keep Full Menu Open & Have Baristas Hand-Craft Complex Seasonal Lattes',
+            desc: 'Continue offering 25 custom drink modifiers with one machine until the line stretches out the door.',
+            marginDelta: -12000,
+            npsDelta: -28,
+            scoreBonus: 0,
+            correct: false,
+            feedback: 'Severe Operations bottleneck! Queue abandonment skyrocketed because menu complexity was not adapted to equipment capacity.'
+          },
+          {
+            title: 'Close the Store Doors for 2 Hours Until the Milk Truck Arrives',
+            desc: 'Halt all store operations completely to avoid serving imperfect orders.',
+            marginDelta: -20000,
+            npsDelta: -15,
+            scoreBonus: 50,
+            correct: false,
+            feedback: 'Shutting down entirely forfeits peak morning revenue when non-dairy and black coffee items could still be sold.'
+          }
+        ]
+      },
+      electronics: {
+        label: '🎧 Consumer Tech',
+        crisisTitle: '🚨 Flash Flagship Launch Sparks Huge Demand While Firmware Bug Triggers Returns!',
+        crisisDesc: 'Launch day for a flagship wireless headphone brings record crowds, but early buyers discover a Bluetooth pairing bug and start returning units at the Service desk. How do you stabilize the value chain?',
+        crisisOptions: [
+          {
+            title: 'Set Up Express Firmware Flash Bar + Instant Exchange Protocol',
+            desc: 'Cross-train tech specialists (HR) to run a 2-minute firmware update station at the Service desk, pre-flash remaining Inbound inventory, and log serial numbers via POS.',
+            marginDelta: 16000,
+            npsDelta: 18,
+            scoreBonus: 500,
+            correct: true,
+            feedback: 'Masterclass in After-Sales Service & Operations! Turning a product defect into a fast in-store tech experience saved thousands in unnecessary returns.'
+          },
+          {
+            title: 'Enforce Strict "No-Return on Opened Boxes" Policy at Checkout',
+            desc: 'Refuse returns and tell customers to contact the overseas manufacturer directly.',
+            marginDelta: -10000,
+            npsDelta: -35,
+            scoreBonus: 0,
+            correct: false,
+            feedback: 'Deflecting Service responsibility destroys retail reputation and guarantees 1-star reviews.'
+          },
+          {
+            title: 'Slash Prices by 40% to Clear Out All Unpatched Units',
+            desc: 'Dump remaining inventory at a steep discount without fixing the firmware.',
+            marginDelta: -22000,
+            npsDelta: -18,
+            scoreBonus: 50,
+            correct: false,
+            feedback: 'Deep discounting erodes your net profit margin while still passing a broken experience to customers.'
+          }
+        ]
+      }
+    };
+
+    /**
+     * 2. RETAIL VALUE CHAIN ACTION CARDS (18 Core Classic + 9 Extended = 27 Total)
+     */
+    const RETAIL_CARDS = [
+      // --- 1. INBOUND LOGISTICS ---
+      {
+        id: 'in1',
+        zone: 'inbound',
+        zoneLabel: '1. Inbound Logistics',
+        tag: 'SUPPLY RECEIVING',
+        title: 'Unloading Supplier Trucks, Barcode Tagging & Backroom Put-Away',
+        hint: 'Receiving merchandise at the loading dock and organizing backroom stock',
+        icon: '🚚',
+        classic: true,
+        rationale: 'Inbound Logistics covers receiving, inspecting, tagging, and storing goods before they hit the sales floor.'
+      },
+      {
+        id: 'in2',
+        zone: 'inbound',
+        zoneLabel: '1. Inbound Logistics',
+        tag: 'INVENTORY CONTROL',
+        title: 'Cold-Chain Storage & Perishable Quality Inspection Upon Arrival',
+        hint: 'Verifying freshness and temperature logs as inventory enters the store',
+        icon: '❄️',
+        classic: true,
+        rationale: 'Inspecting incoming goods and managing backroom warehouse conditions belong directly to Inbound Logistics.'
+      },
+      {
+        id: 'in3',
+        zone: 'inbound',
+        zoneLabel: '1. Inbound Logistics',
+        tag: 'STOCK REPLENISHMENT',
+        title: 'Safety Stock Buffer Management & Cycle Counting',
+        hint: 'Tracking backroom stock levels to prevent shelf stockouts',
+        icon: '📦',
+        classic: false,
+        rationale: 'Warehousing and inventory control of received merchandise are core Inbound Logistics responsibilities.'
+      },
+
+      // --- 2. OPERATIONS ---
+      {
+        id: 'op1',
+        zone: 'operations',
+        zoneLabel: '2. Store Operations',
+        tag: 'MERCHANDISING & FLOOR',
+        title: 'Planogram Shelf Execution, Fitting Rooms & Price Tagging',
+        hint: 'Transforming backroom stock into an inviting, shoppable retail floor',
+        icon: '🏬',
+        classic: true,
+        rationale: 'In retail, Operations encompasses store layout, visual merchandising, fitting rooms, and shelf replenishment.'
+      },
+      {
+        id: 'op2',
+        zone: 'operations',
+        zoneLabel: '2. Store Operations',
+        tag: 'CHECKOUT EXECUTION',
+        title: 'POS Cashier Checkout Processing & Queue Management',
+        hint: 'Scanning items, bagging at the register, and keeping checkout lines fast',
+        icon: '🧾',
+        classic: true,
+        rationale: 'Point-of-Sale (POS) transaction execution on the store floor is a central Store Operations activity.'
+      },
+      {
+        id: 'op3',
+        zone: 'operations',
+        zoneLabel: '2. Store Operations',
+        tag: 'IN-STORE EXPERIENCE',
+        title: 'Impulse Display Placement & Store Opening/Closing Routines',
+        hint: 'Placing high-margin grab-and-go items near registers and maintaining store standards',
+        icon: '✨',
+        classic: false,
+        rationale: 'Daily store floor execution and merchandising layout belong to Store Operations.'
+      },
+
+      // --- 3. OUTBOUND LOGISTICS ---
+      {
+        id: 'out1',
+        zone: 'outbound',
+        zoneLabel: '3. Outbound Logistics',
+        tag: 'OMNICHANNEL FULFILLMENT',
+        title: 'Click-and-Collect (BOPIS) Lockers & Curbside Order Handoff',
+        hint: 'Fulfilling online orders for rapid in-store or curbside customer pickup',
+        icon: '🛍️',
+        classic: true,
+        rationale: 'Outbound Logistics manages how purchased products physically get from the store into the customer’s hands.'
+      },
+      {
+        id: 'out2',
+        zone: 'outbound',
+        zoneLabel: '3. Outbound Logistics',
+        tag: 'LAST-MILE DELIVERY',
+        title: 'Same-Day Local Courier Dispatch & Protective Eco-Packaging',
+        hint: 'Packing online orders and coordinating local delivery riders',
+        icon: '🛵',
+        classic: true,
+        rationale: 'Order packing, shipping, and last-mile delivery to shoppers define Outbound Logistics.'
+      },
+      {
+        id: 'out3',
+        zone: 'outbound',
+        zoneLabel: '3. Outbound Logistics',
+        tag: 'SHIP-FROM-STORE',
+        title: 'Ship-from-Store Parcel Manifesting & Carrier Handover',
+        hint: 'Using store inventory to fulfill regional e-commerce orders',
+        icon: '📮',
+        classic: false,
+        rationale: 'Dispatching finished orders out of the retail facility is Outbound Logistics.'
+      },
+
+      // --- 4. MARKETING & SALES ---
+      {
+        id: 'mk1',
+        zone: 'marketing',
+        zoneLabel: '4. Marketing & Sales',
+        tag: 'TRAFFIC & PROMOTION',
+        title: 'Storefront Window Displays, Seasonal Sales & Geo-Targeted Ads',
+        hint: 'Attracting foot traffic and convincing shoppers to buy',
+        icon: '📣',
+        classic: true,
+        rationale: 'Marketing & Sales drives customer awareness, store traffic, promotional pricing, and conversion.'
+      },
+      {
+        id: 'mk2',
+        zone: 'marketing',
+        zoneLabel: '4. Marketing & Sales',
+        tag: 'CONVERSION & LOYALTY',
+        title: 'VIP Loyalty Tier Campaigns, Bundling & Consultative Selling',
+        hint: 'Increasing average basket size through cross-selling and member rewards',
+        icon: '🎯',
+        classic: true,
+        rationale: 'Promotional offers, personal selling, and loyalty marketing belong in Marketing & Sales.'
+      },
+      {
+        id: 'mk3',
+        zone: 'marketing',
+        zoneLabel: '4. Marketing & Sales',
+        tag: 'OMNICHANNEL ACQUISITION',
+        title: 'Local Influencer Livestream & Flash Push-Notification Deals',
+        hint: 'Generating immediate store visits and app checkouts via social campaigns',
+        icon: '📱',
+        classic: false,
+        rationale: 'Demand generation and promotional campaigns sit squarely in Marketing & Sales.'
+      },
+
+      // --- 5. SERVICE ---
+      {
+        id: 'sv1',
+        zone: 'service',
+        zoneLabel: '5. After-Sales Service',
+        tag: 'RETENTION & TRUST',
+        title: 'Hassle-Free Returns/Exchanges Desk & Warranty Repairs',
+        hint: 'Resolving post-purchase product issues to protect customer lifetime value',
+        icon: '🔄',
+        classic: true,
+        rationale: 'Service preserves and enhances product value after the sale through returns, repairs, and support.'
+      },
+      {
+        id: 'sv2',
+        zone: 'service',
+        zoneLabel: '5. After-Sales Service',
+        tag: 'CUSTOMER CARE',
+        title: 'Post-Purchase Satisfaction Surveys & Alteration/Setup Support',
+        hint: 'Following up with buyers and providing tailoring or device setup help',
+        icon: '💬',
+        classic: true,
+        rationale: 'Customer support, product setup, and complaint resolution are classic After-Sales Service activities.'
+      },
+      {
+        id: 'sv3',
+        zone: 'service',
+        zoneLabel: '5. After-Sales Service',
+        tag: 'WARRANTY & CLAIMS',
+        title: 'Extended Protection Plan Claims & Defective Replacement Handling',
+        hint: 'Managing warranty replacements smoothly at the customer service counter',
+        icon: '🛡️',
+        classic: false,
+        rationale: 'Warranty fulfillment and post-sale customer care belong to Service.'
+      },
+
+      // --- 6. FIRM INFRASTRUCTURE ---
+      {
+        id: 'inf1',
+        zone: 'infrastructure',
+        zoneLabel: '6. Firm Infrastructure',
+        tag: 'GOVERNANCE & FINANCE',
+        title: 'Store Lease Negotiation, Store P&L Accounting & Loss Prevention',
+        hint: 'Real estate site selection, financial reporting, and anti-theft security systems',
+        icon: '🏛️',
+        classic: true,
+        rationale: 'Firm Infrastructure includes general management, store real estate/leases, finance, legal, and security.'
+      },
+      {
+        id: 'inf2',
+        zone: 'infrastructure',
+        zoneLabel: '6. Firm Infrastructure',
+        tag: 'RISK & COMPLIANCE',
+        title: 'Fire Safety Audits, Tax Compliance & Store Shrinkage Control',
+        hint: 'Protecting store assets and ensuring regulatory compliance across all departments',
+        icon: '⚖️',
+        classic: true,
+        rationale: 'Asset protection, compliance, and executive planning support the entire retail store under Firm Infrastructure.'
+      },
+      {
+        id: 'inf3',
+        zone: 'infrastructure',
+        zoneLabel: '6. Firm Infrastructure',
+        tag: 'REAL ESTATE & FACILITIES',
+        title: 'Flagship Mall Lease Renewal & Store Capital Budgeting',
+        hint: 'Managing store occupancy costs and annual financial budgets',
+        icon: '🏢',
+        classic: false,
+        rationale: 'Facilities management, real estate leases, and accounting belong to Firm Infrastructure.'
+      },
+
+      // --- 7. HUMAN RESOURCE MANAGEMENT ---
+      {
+        id: 'hr1',
+        zone: 'hr',
+        zoneLabel: '7. Human Resource Management',
+        tag: 'WORKFORCE & SCHEDULING',
+        title: 'Hiring Seasonal Associates, Peak Shift Rostering & Sales Training',
+        hint: 'Recruiting, scheduling, and upskilling store staff to match foot traffic',
+        icon: '👥',
+        classic: true,
+        rationale: 'Human Resource Management covers recruiting, shift scheduling, compensation, and training store employees.'
+      },
+      {
+        id: 'hr2',
+        zone: 'hr',
+        zoneLabel: '7. Human Resource Management',
+        tag: 'TALENT DEVELOPMENT',
+        title: 'Cross-Training Cashiers for Omnichannel Picking & Conflict Resolution',
+        hint: 'Equipping floor staff with multi-role retail skills and performance incentives',
+        icon: '🎓',
+        classic: true,
+        rationale: 'Employee skill development and incentive programs are core Human Resource Management functions.'
+      },
+      {
+        id: 'hr3',
+        zone: 'hr',
+        zoneLabel: '7. Human Resource Management',
+        tag: 'STAFF RETENTION',
+        title: 'Store Associate Onboarding & Commission Structure Design',
+        hint: 'Reducing retail staff turnover through clear career paths and fair pay',
+        icon: '🤝',
+        classic: false,
+        rationale: 'Onboarding and compensation planning belong to Human Resource Management.'
+      },
+
+      // --- 8. TECHNOLOGY DEVELOPMENT ---
+      {
+        id: 'tc1',
+        zone: 'tech',
+        zoneLabel: '8. Technology Development',
+        tag: 'RETAIL TECH STACK',
+        title: 'RFID Smart Inventory Sensors, Self-Checkout Kiosks & Mobile CRM App',
+        hint: 'Deploying digital systems that automate stock visibility and checkout speed',
+        icon: '💻',
+        classic: true,
+        rationale: 'Technology Development encompasses the software, hardware, RFID, and data systems supporting retail operations.'
+      },
+      {
+        id: 'tc2',
+        zone: 'tech',
+        zoneLabel: '8. Technology Development',
+        tag: 'DATA & ANALYTICS',
+        title: 'AI Demand Forecasting Engine & Cloud POS Integration',
+        hint: 'Using predictive analytics to optimize stock levels and omnichannel checkout',
+        icon: '📡',
+        classic: true,
+        rationale: 'Information systems, forecasting algorithms, and POS software development fall under Technology Development.'
+      },
+      {
+        id: 'tc3',
+        zone: 'tech',
+        zoneLabel: '8. Technology Development',
+        tag: 'STORE AUTOMATION',
+        title: 'Electronic Shelf Labels (ESL) & Foot-Traffic Heatmap Cameras',
+        hint: 'Automating dynamic price updates and analyzing shopper movement patterns',
+        icon: '🤖',
+        classic: false,
+        rationale: 'Smart store hardware and customer analytics tools belong to Technology Development.'
+      },
+
+      // --- 9. PROCUREMENT ---
+      {
+        id: 'pr1',
+        zone: 'procurement',
+        zoneLabel: '9. Procurement',
+        tag: 'SOURCING & CONTRACTS',
+        title: 'Negotiating Wholesale Volume Discounts & Net-60 Supplier Terms',
+        hint: 'Purchasing merchandise and negotiating favorable vendor contracts',
+        icon: '📑',
+        classic: true,
+        rationale: 'Procurement is the function of purchasing merchandise, supplies, and negotiating vendor terms.'
+      },
+      {
+        id: 'pr2',
+        zone: 'procurement',
+        zoneLabel: '9. Procurement',
+        tag: 'VENDOR MANAGEMENT',
+        title: 'Sourcing Store Display Fixtures, Shopping Bags & Ethical Vendors',
+        hint: 'Selecting suppliers for both resale goods and store operating supplies',
+        icon: '✍️',
+        classic: true,
+        rationale: 'Acquiring store equipment, packaging supplies, and resale inventory is Procurement (distinct from physical receiving in Inbound Logistics).'
+      },
+      {
+        id: 'pr3',
+        zone: 'procurement',
+        zoneLabel: '9. Procurement',
+        tag: 'STRATEGIC BUYING',
+        title: 'Seasonal Merchandise Assortment Buying & Vendor SLA Contracting',
+        hint: 'Selecting brand partners and locking in wholesale unit margins before the season',
+        icon: '🤝',
+        classic: false,
+        rationale: 'Merchandise buying and supplier contract negotiation define Retail Procurement.'
+      }
+    ];
+
+    /**
+     * 3. WEB AUDIO API SOUND SYNTHESIZER
+     */
+    let soundEnabled = true;
+    let audioCtx = null;
+
+    function initAudio() {
+      if (!audioCtx) {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (AudioContext) audioCtx = new AudioContext();
+      }
+      if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    function playSound(type) {
+      if (!soundEnabled) return;
+      try {
+        initAudio();
+        if (!audioCtx) return;
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        if (type === 'correct') {
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(523.25, now);
+          osc.frequency.setValueAtTime(659.25, now + 0.07);
+          osc.frequency.setValueAtTime(783.99, now + 0.14);
+          gain.gain.setValueAtTime(0.16, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.32);
+          osc.start(now);
+          osc.stop(now + 0.33);
+        } else if (type === 'wrong') {
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(185, now);
+          osc.frequency.linearRampToValueAtTime(130, now + 0.24);
+          gain.gain.setValueAtTime(0.15, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.27);
+          osc.start(now);
+          osc.stop(now + 0.28);
+        } else if (type === 'crisis') {
+          osc.type = 'square';
+          osc.frequency.setValueAtTime(440, now);
+          osc.frequency.setValueAtTime(349.23, now + 0.15);
+          osc.frequency.setValueAtTime(440, now + 0.3);
+          gain.gain.setValueAtTime(0.12, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.48);
+          osc.start(now);
+          osc.stop(now + 0.5);
+        } else if (type === 'select') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(460, now);
+          gain.gain.setValueAtTime(0.07, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.07);
+          osc.start(now);
+          osc.stop(now + 0.08);
+        } else if (type === 'win') {
+          const notes = [523.25, 659.25, 783.99, 1046.5];
+          notes.forEach((f, i) => {
+            const o = audioCtx.createOscillator();
+            const g = audioCtx.createGain();
+            o.type = 'triangle';
+            o.connect(g);
+            g.connect(audioCtx.destination);
+            o.frequency.setValueAtTime(f, now + i * 0.1);
+            g.gain.setValueAtTime(0.16, now + i * 0.1);
+            g.gain.exponentialRampToValueAtTime(0.001, now + i * 0.1 + 0.32);
+            o.start(now + i * 0.1);
+            o.stop(now + i * 0.1 + 0.33);
+          });
+        }
+      } catch (e) {}
+    }
+
+    function toggleSound() {
+      soundEnabled = !soundEnabled;
+      document.getElementById('iconSoundOn').classList.toggle('hidden', !soundEnabled);
+      document.getElementById('iconSoundOff').classList.toggle('hidden', soundEnabled);
+      if (soundEnabled) playSound('select');
+    }
+
+    /**
+     * 4. GAME STATE & NICHE SELECTION
+     */
+    const ALL_ZONES = [
+      'inbound', 'operations', 'outbound', 'marketing', 'service',
+      'infrastructure', 'hr', 'tech', 'procurement'
+    ];
+
+    let selectedNiche = 'fashion';
+
+    let gameState = {
+      mode: 'classic',
+      teamName: 'Alpha Retail',
+      niche: 'fashion',
+      deck: [],
+      currentIndex: 0,
+      score: 0,
+      margin: 100000,
+      nps: 50,
+      combo: 1,
+      maxCombo: 1,
+      lives: 3,
+      timeLeft: 60,
+      timerInterval: null,
+      correctCount: 0,
+      attemptsCount: 0,
+      zoneCounts: {},
+      isOver: false
+    };
+
+    function selectNiche(nicheKey) {
+      selectedNiche = nicheKey;
+      playSound('select');
+
+      document.querySelectorAll('.niche-btn').forEach(btn => {
+        const isTarget = btn.getAttribute('data-niche') === nicheKey;
+        const badge = btn.querySelector('span:last-child');
+        if (isTarget) {
+          btn.className = 'niche-btn active text-left p-3 rounded-2xl bg-emerald-500/20 border-2 border-emerald-400 transition cursor-pointer';
+          if (badge) {
+            badge.className = 'text-[10px] font-bold uppercase px-1.5 py-0.5 rounded bg-emerald-500/30 text-emerald-200';
+            badge.textContent = 'Selected';
+          }
+        } else {
+          btn.className = 'niche-btn text-left p-3 rounded-2xl bg-slate-900/80 border-2 border-slate-700 hover:border-slate-500 transition cursor-pointer';
+          if (badge) {
+            badge.className = 'text-[10px] font-bold uppercase px-1.5 py-0.5 rounded bg-slate-800 text-slate-400';
+            badge.textContent = 'Select';
+          }
+        }
+      });
+    }
+
+    function shuffleArray(arr) {
+      const copy = [...arr];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function showScreen(id) {
+      ['screenHome', 'screenGame', 'screenCrisis', 'screenResult'].forEach(s => {
+        document.getElementById(s).classList.add('hidden');
+      });
+      document.getElementById(id).classList.remove('hidden');
+    }
+
+    function goHome() {
+      stopTimer();
+      renderLeaderboard();
+      showScreen('screenHome');
+    }
+
+    /**
+     * 5. START & RUN VALUE CHAIN GAMEPLAY
+     */
+    function startGame(mode) {
+      initAudio();
+      playSound('select');
+      stopTimer();
+
+      const rawTeam = document.getElementById('teamNameInput').value.trim();
+      const teamName = rawTeam || 'Executive Retail Team';
+
+      const sourceCards = mode === 'classic'
+        ? RETAIL_CARDS.filter(c => c.classic)
+        : RETAIL_CARDS;
+
+      const deck = shuffleArray(sourceCards);
+
+      const zoneCounts = {};
+      ALL_ZONES.forEach(z => {
+        zoneCounts[z] = 0;
+        document.getElementById(`count_${z}`).textContent = '0';
+        document.getElementById(`badges_${z}`).innerHTML = '';
+      });
+
+      gameState = {
+        mode,
+        teamName,
+        niche: selectedNiche,
+        deck,
+        currentIndex: 0,
+        score: 0,
+        margin: 100000,
+        nps: 50,
+        combo: 1,
+        maxCombo: 1,
+        lives: 3,
+        timeLeft: 60,
+        timerInterval: null,
+        correctCount: 0,
+        attemptsCount: 0,
+        zoneCounts,
+        isOver: false
+      };
+
+      document.getElementById('hudTeamName').textContent = teamName;
+      document.getElementById('hudNicheBadge').textContent = NICHES[selectedNiche].label;
+
+      const modeBadge = document.getElementById('hudModeBadge');
+      if (mode === 'classic') {
+        modeBadge.textContent = 'CLASSIC + CRISIS';
+        modeBadge.className = 'text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300';
+        document.getElementById('hudLivesBox').classList.remove('hidden');
+        document.getElementById('hudTimerBox').classList.add('hidden');
+      } else {
+        modeBadge.textContent = 'TIME ATTACK 60S';
+        modeBadge.className = 'text-[11px] font-bold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300';
+        document.getElementById('hudLivesBox').classList.add('hidden');
+        document.getElementById('hudTimerBox').classList.remove('hidden');
+        startTimer();
+      }
+
+      resetFeedbackBox();
+      updateHUD();
+      renderCurrentCard();
+      showScreen('screenGame');
+    }
+
+    function restartSameMode() {
+      startGame(gameState.mode);
+    }
+
+    function startTimer() {
+      const timerEl = document.getElementById('hudTimer');
+      timerEl.textContent = `${gameState.timeLeft}s`;
+      gameState.timerInterval = setInterval(() => {
+        gameState.timeLeft--;
+        timerEl.textContent = `${gameState.timeLeft}s`;
+        if (gameState.timeLeft <= 10) {
+          timerEl.classList.add('animate-pulse');
+        } else {
+          timerEl.classList.remove('animate-pulse');
+        }
+        if (gameState.timeLeft <= 0) {
+          stopTimer();
+          finishGame(true);
+        }
+      }, 1000);
+    }
+
+    function stopTimer() {
+      if (gameState.timerInterval) {
+        clearInterval(gameState.timerInterval);
+        gameState.timerInterval = null;
+      }
+    }
+
+    function updateHUD() {
+      document.getElementById('hudScore').textContent = gameState.score;
+      document.getElementById('hudMargin').textContent = `$${gameState.margin.toLocaleString()}`;
+      document.getElementById('hudNps').textContent = `${gameState.nps >= 0 ? '+' : ''}${gameState.nps}`;
+      document.getElementById('hudCombo').textContent = `x${gameState.combo}`;
+
+      if (gameState.mode === 'classic') {
+        const total = gameState.deck.length;
+        const pct = Math.round((gameState.correctCount / total) * 100);
+        document.getElementById('hudProgressText').textContent = `Card ${Math.min(gameState.currentIndex + 1, total)} / ${total} (${pct}%)`;
+        document.getElementById('hudProgressBar').style.width = `${pct}%`;
+        const hearts = '❤️'.repeat(Math.max(0, gameState.lives)) + '🖤'.repeat(Math.max(0, 3 - gameState.lives));
+        document.getElementById('hudLives').textContent = hearts;
+      } else {
+        document.getElementById('hudProgressText').textContent = `Completed: ${gameState.correctCount} links`;
+        const pct = Math.min(100, Math.round((gameState.correctCount / 27) * 100));
+        document.getElementById('hudProgressBar').style.width = `${pct}%`;
+      }
+    }
+
+    function resetFeedbackBox() {
+      const box = document.getElementById('feedbackBox');
+      box.className = 'flex-1 rounded-2xl bg-slate-900/90 border border-slate-700/80 p-4 flex flex-col justify-center transition-all';
+      document.getElementById('feedbackIcon').className = 'w-9 h-9 rounded-xl bg-sky-500/20 text-sky-300 flex items-center justify-center text-lg shrink-0 font-bold';
+      document.getElementById('feedbackIcon').textContent = 'ℹ️';
+      document.getElementById('feedbackTitle').className = 'font-bold text-sm text-sky-300';
+      document.getElementById('feedbackTitle').textContent = 'Ready to build your store value chain!';
+      document.getElementById('feedbackDesc').textContent = 'Drag the action card on the left or tap any of the 9 value chain slots below to place it.';
+    }
+
+    function renderCurrentCard() {
+      if (gameState.currentIndex >= gameState.deck.length) {
+        if (gameState.mode === 'timeattack') {
+          gameState.deck = shuffleArray(RETAIL_CARDS);
+          gameState.currentIndex = 0;
+        } else {
+          // Completed Classic Deck -> Trigger Round 3 Black Swan Crisis!
+          triggerBlackSwanCrisis();
+          return;
+        }
+      }
+
+      const card = gameState.deck[gameState.currentIndex];
+      const cardEl = document.getElementById('activeCard');
+      cardEl.classList.remove('card-enter');
+      void cardEl.offsetWidth;
+      cardEl.classList.add('card-enter');
+
+      document.getElementById('cardTag').textContent = card.tag;
+      document.getElementById('cardTitle').textContent = card.title;
+      document.getElementById('cardHint').textContent = card.hint;
+      document.getElementById('cardIcon').textContent = card.icon;
+    }
+
+    /**
+     * 6. DRAG & DROP + 1-TAP SLOT PLACEMENT HANDLERS
+     */
+    const activeCardEl = document.getElementById('activeCard');
+    activeCardEl.addEventListener('dragstart', (e) => {
+      e.dataTransfer.setData('text/plain', 'retail-card');
+      e.dataTransfer.effectAllowed = 'move';
+      activeCardEl.classList.add('opacity-75');
+    });
+
+    activeCardEl.addEventListener('dragend', () => {
+      activeCardEl.classList.remove('opacity-75');
+      document.querySelectorAll('.drop-zone').forEach(z => z.classList.remove('drop-zone-active'));
+    });
+
+    function toggleSelectCard() {
+      playSound('select');
+    }
+
+    function handleDragOver(e) {
+      e.preventDefault();
+      e.currentTarget.classList.add('drop-zone-active');
+    }
+
+    function handleDragLeave(e) {
+      e.currentTarget.classList.remove('drop-zone-active');
+    }
+
+    function handleDrop(e, targetZone) {
+      e.preventDefault();
+      e.currentTarget.classList.remove('drop-zone-active');
+      evaluatePlacement(targetZone);
+    }
+
+    function handleZoneClick(targetZone) {
+      if (gameState.isOver) return;
+      evaluatePlacement(targetZone);
+    }
+
+    function evaluatePlacement(targetZone) {
+      if (gameState.isOver) return;
+      const card = gameState.deck[gameState.currentIndex];
+      if (!card) return;
+
+      gameState.attemptsCount++;
+      const zoneEl = document.querySelector(`[data-zone="${targetZone}"]`);
+      const feedbackBox = document.getElementById('feedbackBox');
+      const feedbackIcon = document.getElementById('feedbackIcon');
+      const feedbackTitle = document.getElementById('feedbackTitle');
+      const feedbackDesc = document.getElementById('feedbackDesc');
+
+      if (card.zone === targetZone) {
+        // CORRECT PLACEMENT
+        playSound('correct');
+        const points = 100 * gameState.combo;
+        gameState.score += points;
+        gameState.margin += 4500;
+        gameState.nps = Math.min(100, gameState.nps + 2);
+        gameState.correctCount++;
+        gameState.combo = Math.min(gameState.combo + 1, 5);
+        if (gameState.combo > gameState.maxCombo) gameState.maxCombo = gameState.combo;
+
+        if (zoneEl) {
+          zoneEl.classList.remove('animate-pop');
+          void zoneEl.offsetWidth;
+          zoneEl.classList.add('animate-pop');
+        }
+
+        // Update slot badge
+        gameState.zoneCounts[targetZone]++;
+        document.getElementById(`count_${targetZone}`).textContent = gameState.zoneCounts[targetZone];
+        const badgesContainer = document.getElementById(`badges_${targetZone}`);
+        const badge = document.createElement('span');
+        const isPrimary = ['inbound', 'operations', 'outbound', 'marketing', 'service'].includes(targetZone);
+        badge.className = isPrimary
+          ? 'text-[10px] font-semibold px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-200 border border-emerald-400/30 truncate max-w-[125px]'
+          : 'text-[10px] font-semibold px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-200 border border-indigo-400/30 truncate max-w-[125px]';
+        badge.textContent = `✓ ${card.title.split(',')[0].split('&')[0].trim()}`;
+        badgesContainer.appendChild(badge);
+
+        feedbackBox.className = 'flex-1 rounded-2xl bg-emerald-950/55 border border-emerald-500/50 p-4 flex flex-col justify-center transition-all';
+        feedbackIcon.className = 'w-9 h-9 rounded-xl bg-emerald-500/25 text-emerald-300 flex items-center justify-center text-lg shrink-0 font-bold';
+        feedbackIcon.textContent = '✓';
+        feedbackTitle.className = 'font-bold text-sm text-emerald-300';
+        feedbackTitle.textContent = `Aligned! +${points} pts • +$4,500 Margin (Combo x${gameState.combo})`;
+        feedbackDesc.textContent = card.rationale;
+
+        gameState.currentIndex++;
+        updateHUD();
+        renderCurrentCard();
+
+      } else {
+        // INCORRECT PLACEMENT
+        playSound('wrong');
+        gameState.combo = 1;
+        gameState.margin = Math.max(20000, gameState.margin - 6000);
+        gameState.nps = Math.max(-50, gameState.nps - 4);
+
+        if (zoneEl) {
+          zoneEl.classList.remove('animate-shake');
+          void zoneEl.offsetWidth;
+          zoneEl.classList.add('animate-shake');
+        }
+
+        feedbackBox.className = 'flex-1 rounded-2xl bg-rose-950/55 border border-rose-500/50 p-4 flex flex-col justify-center transition-all';
+        feedbackIcon.className = 'w-9 h-9 rounded-xl bg-rose-500/25 text-rose-300 flex items-center justify-center text-lg shrink-0 font-bold';
+        feedbackIcon.textContent = '✕';
+        feedbackTitle.className = 'font-bold text-sm text-rose-300';
+        feedbackTitle.textContent = `Operational Bottleneck! Correct Link: ${card.zoneLabel}`;
+        feedbackDesc.textContent = card.rationale;
+
+        if (gameState.mode === 'classic') {
+          gameState.lives--;
+          updateHUD();
+          if (gameState.lives <= 0) {
+            setTimeout(() => finishGame(false), 700);
+          }
+        } else {
+          gameState.score = Math.max(0, gameState.score - 30);
+          gameState.currentIndex++;
+          updateHUD();
+          renderCurrentCard();
+        }
+      }
+    }
+
+    /**
+     * 7. ROUND 3: BLACK SWAN CRISIS STRESS TEST (CLASSIC MODE FINALE)
+     */
+    function triggerBlackSwanCrisis() {
+      playSound('crisis');
+      const nicheData = NICHES[gameState.niche];
+
+      document.getElementById('crisisHeadline').textContent = nicheData.crisisTitle;
+      document.getElementById('crisisScenarioDesc').textContent = nicheData.crisisDesc;
+
+      const optionsContainer = document.getElementById('crisisOptionsContainer');
+      optionsContainer.innerHTML = '';
+
+      const shuffledOptions = shuffleArray(nicheData.crisisOptions);
+      shuffledOptions.forEach((opt, idx) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'w-full text-left p-4 sm:p-5 rounded-2xl bg-slate-900/90 hover:bg-slate-800 border-2 border-slate-700 hover:border-amber-400 transition cursor-pointer group';
+        btn.innerHTML = `
+          <div class="flex items-start gap-3">
+            <span class="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-300 font-black flex items-center justify-center shrink-0 group-hover:bg-amber-500 group-hover:text-slate-950 transition">
+              ${String.fromCharCode(65 + idx)}
+            </span>
+            <div>
+              <h4 class="font-extrabold text-white text-sm sm:text-base group-hover:text-amber-300 transition">${opt.title}</h4>
+              <p class="text-xs sm:text-sm text-slate-300 mt-1 leading-relaxed">${opt.desc}</p>
+            </div>
+          </div>
+        `;
+        btn.onclick = () => resolveCrisis(opt);
+        optionsContainer.appendChild(btn);
+      });
+
+      showScreen('screenCrisis');
+    }
+
+    function resolveCrisis(option) {
+      gameState.margin += option.marginDelta;
+      gameState.nps = Math.max(-100, Math.min(100, gameState.nps + option.npsDelta));
+      gameState.score += option.scoreBonus;
+
+      if (option.correct) {
+        playSound('win');
+      } else {
+        playSound('wrong');
+      }
+
+      finishGame(true, option.feedback);
+    }
+
+    /**
+     * 8. EXECUTIVE AUDIT, RANKS & LOCALSTORAGE LEADERBOARD
+     */
+    function finishGame(completed, customSummary = '') {
+      if (gameState.isOver) return;
+      gameState.isOver = true;
+      stopTimer();
+
+      const accuracy = gameState.attemptsCount > 0
+        ? Math.round((gameState.correctCount / gameState.attemptsCount) * 100)
+        : 0;
+
+      let title = 'Store Trainee';
+      let trophy = '🏪';
+      let headline = 'Store Operations Audit Complete';
+
+      if (gameState.score >= 2200 && accuracy >= 85) {
+        title = 'Retail Empire CEO';
+        trophy = '👑';
+        headline = 'Masterful Omnichannel Execution!';
+      } else if (gameState.score >= 1300 && accuracy >= 70) {
+        title = 'Regional Operations Director';
+        trophy = '🏆';
+        headline = 'High-Margin Value Chain Achieved!';
+      } else if (completed) {
+        title = 'Store Floor Manager';
+        trophy = '🎖️';
+        headline = 'Store Value Chain Operational!';
+      } else {
+        title = 'Junior Retail Analyst';
+        trophy = '📉';
+        headline = 'Operational Bottlenecks Halted Store Flow';
+      }
+
+      if (completed && gameState.mode === 'timeattack' && gameState.score >= 1000) {
+        playSound('win');
+      }
+
+      document.getElementById('resultTrophy').textContent = trophy;
+      document.getElementById('resultRankBadge').textContent = `EXECUTIVE TITLE: ${title.toUpperCase()}`;
+      document.getElementById('resultHeadline').textContent = headline;
+      document.getElementById('resultSubtext').textContent = customSummary ||
+        `Your management team built the ${NICHES[gameState.niche].label} value chain with a max combo of x${gameState.maxCombo}.`;
+
+      document.getElementById('resScore').textContent = gameState.score;
+      document.getElementById('resMargin').textContent = `$${Math.round(gameState.margin / 1000)}k`;
+      document.getElementById('resNps').textContent = `${gameState.nps >= 0 ? '+' : ''}${gameState.nps}`;
+      document.getElementById('resAccuracy').textContent = `${accuracy}% (x${gameState.maxCombo})`;
+
+      saveLeaderboardEntry({
+        team: gameState.teamName,
+        niche: NICHES[gameState.niche].label,
+        mode: gameState.mode === 'classic' ? 'Classic' : 'Sprint 60s',
+        score: gameState.score,
+        margin: `$${Math.round(gameState.margin / 1000)}k`,
+        title
+      });
+
+      showScreen('screenResult');
+    }
+
+    const LB_STORAGE_KEY = 'retail_empire_value_chain_lb_v1';
+
+    function saveLeaderboardEntry(entry) {
+      try {
+        const raw = localStorage.getItem(LB_STORAGE_KEY);
+        const list = raw ? JSON.parse(raw) : [];
+        list.push(entry);
+        list.sort((a, b) => b.score - a.score);
+        localStorage.setItem(LB_STORAGE_KEY, JSON.stringify(list.slice(0, 10)));
+      } catch (e) {}
+    }
+
+    function renderLeaderboard() {
+      const container = document.getElementById('leaderboardContainer');
+      let list = [];
+      try {
+        const raw = localStorage.getItem(LB_STORAGE_KEY);
+        list = raw ? JSON.parse(raw) : [];
+      } catch (e) {
+        list = [];
+      }
+
+      if (list.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-6 text-slate-400 text-sm">
+            No management boards recorded yet. Configure your retail store above and launch a simulation!
+          </div>
+        `;
+        return;
+      }
+
+      const rows = list.map((item, idx) => {
+        const medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `#${idx + 1}`;
+        return `
+          <tr class="border-b border-slate-800/80 hover:bg-slate-800/40 text-xs sm:text-sm">
+            <td class="py-2.5 px-3 font-bold text-slate-200">${medal}</td>
+            <td class="py-2.5 px-3 font-bold text-white">${escapeHTML(item.team)}</td>
+            <td class="py-2.5 px-3 text-slate-300 hidden sm:table-cell">${escapeHTML(item.niche)}</td>
+            <td class="py-2.5 px-3">
+              <span class="px-2 py-0.5 rounded-full text-[11px] font-semibold ${item.mode === 'Classic' ? 'bg-emerald-500/20 text-emerald-300' : 'bg-amber-500/20 text-amber-300'}">
+                ${item.mode}
+              </span>
+            </td>
+            <td class="py-2.5 px-3 font-black text-white">${item.score}</td>
+            <td class="py-2.5 px-3 font-bold text-emerald-400">${item.margin}</td>
+            <td class="py-2.5 px-3 text-amber-300 font-medium hidden md:table-cell">${escapeHTML(item.title)}</td>
+          </tr>
+        `;
+      }).join('');
+
+      container.innerHTML = `
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="text-[11px] uppercase tracking-wider text-slate-400 border-b border-slate-800">
+              <th class="py-2 px-3">Rank</th>
+              <th class="py-2 px-3">Management Board</th>
+              <th class="py-2 px-3 hidden sm:table-cell">Store Niche</th>
+              <th class="py-2 px-3">Mode</th>
+              <th class="py-2 px-3">Score</th>
+              <th class="py-2 px-3">Net Margin</th>
+              <th class="py-2 px-3 hidden md:table-cell">Executive Title</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      `;
+    }
+
+    function clearLeaderboard() {
+      try {
+        localStorage.removeItem(LB_STORAGE_KEY);
+      } catch (e) {}
+      renderLeaderboard();
+    }
+
+    function escapeHTML(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function openDebriefModal() {
+      playSound('select');
+      document.getElementById('debriefModal').classList.remove('hidden');
+    }
+
+    function closeDebriefModal() {
+      document.getElementById('debriefModal').classList.add('hidden');
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      renderLeaderboard();
+    });
+  </script>
+</body>
+</html>
